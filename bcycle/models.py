@@ -1,14 +1,14 @@
 from bcycle import db
 
 
-class User(db.Model):
-    __tablename__ = 'user'
+class Rider(db.Model):
+    __tablename__ = 'rider'
 
     id = db.Column(db.Integer, primary_key=True)
     program = db.Column(db.String)
     zip_code = db.Column(db.Integer)
     membership_type = db.Column(db.String)
-    trips = db.relationship("Trip", backref="user")
+    trips = db.relationship("Trip", backref="rider")
 
 
 class Trip(db.Model):
@@ -21,3 +21,4 @@ class Trip(db.Model):
     return_datetime = db.Column(db.DateTime)
     return_kiosk = db.Column(db.String)
     duration = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('rider.id'))
