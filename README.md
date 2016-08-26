@@ -1,12 +1,23 @@
-## Start Postgres
-> pg_ctl -D /usr/local/var/postgres -l logfile start
+## Running locally
 
-## Create bcycle database
-> execute 'CREATE DATABASE bcycle;' in psql
+Install B-Cycle requirements
+```bash
+pip install -r requirements.txt
+```
 
-## Initialize database
-> python manage.py db init
+Start Postgres and create bcycle database
+```bash
+pg_ctl -D /usr/local/var/postgres -l logfile start
+execute 'CREATE DATABASE bcycle;' in psql
+```
 
-## Run Migrations
-> python manage.py db migrate
-> python manage.py db upgrade
+Run migrations
+```bash
+python manage.py db migrate
+python manage.py db upgrade
+```
+
+Run tests
+```bash
+python -m unittest discover 
+```
