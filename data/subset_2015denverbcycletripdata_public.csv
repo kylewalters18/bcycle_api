@@ -1,4 +1,4 @@
-User's Program,User ID,Zip,Membership Type,Bike,Checkout Date,Checkout Time,Checkout Kiosk,Return Date,Return Time,Return Kiosk,Duration (Minutes)
+users_program,user_id,zip,membership_type,bike,checkout_date,checkout_time,checkout_kiosk,return_date,return_time,return_kiosk,duration_minutes
 Denver B-cycle,253201,80202,Annual (Denver B-cycle),212,12/31/15,11:51:00 PM,32nd & Pecos,12/31/15,11:57:00 PM,15th & Delgany,6
 Denver B-cycle,120679,80209,Annual (Denver B-cycle),9,12/31/15,11:29:00 PM,18th & Arapahoe,12/31/15,11:35:00 PM,25th & Lawrence,6
 Denver B-cycle,1027135,60439,Annual (Denver B-cycle),322,12/31/15,10:50:00 PM,16th & Broadway,12/31/15,10:59:00 PM,17th & Race,9
@@ -8,4 +8,5 @@ Denver B-cycle,1051678,80211,24-hour (Denver B-cycle),611,12/31/15,9:18:00 PM,16
 Denver B-cycle,313863,80205,Annual Plus (Denver B-cycle),210,12/31/15,9:12:00 PM,25th & Lawrence,12/31/15,9:16:00 PM,33rd & Arapahoe,4
 Denver B-cycle,395197,80229,Annual (Denver B-cycle),600,12/31/15,9:11:00 PM,19th & Wynkoop,1/1/16,7:37:00 AM,19th & Wynkoop,626
 Des Moines B-cycle,253997,80211,Annual (Des Moines B-cycle),180,12/31/15,9:10:00 PM,16th & Little Raven,12/31/15,9:13:00 PM,16th & Platte,3
+Boulder B-cycle,254005,80211,Republic Rider (Boulder B-cycle),567,12/31/15,9:10:00 PM,16th & Little Raven,12/31/15,9:13:00 PM,16th & Platte,3
 Boulder B-cycle,254005,80211,Republic Rider (Boulder B-cycle),567,12/31/15,9:10:00 PM,16th & Little Raven,12/31/15,9:13:00 PM,16th & Platte,3
