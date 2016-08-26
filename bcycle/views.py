@@ -9,7 +9,7 @@ def serialize(datetime):
 
 
 @app.route('/trip')
-def trips():
+def get_trips():
     trips_result = [dict(bike_id=trip.bike_id,
                          duration=trip.duration,
                          checkout_kiosk=trip.checkout_kiosk,
@@ -21,3 +21,20 @@ def trips():
     return json.dumps(trips_result)
 
 
+@app.route('/trip/<int:trip_id>')
+def get_trip(trip_id):
+    pass
+
+
+@app.route('/rider')
+def get_riders():
+    pass
+
+
+@app.route('/rider/<int:rider_id>')
+def get_rider(rider_id):
+    pass
+
+@app.errorhandler(404)
+def not_found(error):
+    return json.dumps({'error': 'not found'}), 404
