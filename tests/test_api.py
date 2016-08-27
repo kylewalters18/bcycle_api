@@ -37,10 +37,10 @@ class TripTestCase(unittest.TestCase):
         self.assertEqual(actual['return_kiosk'], expected.return_kiosk)
         self.assertEqual(actual['return_datetime'], expected.return_datetime.isoformat())
 
-    @mock.patch('bcycle.models.Trip.query')
-    def test_get_trips_endpoint(self, mock_query):
+    @mock.patch('bcycle.views.Trip')
+    def test_get_trips_endpoint(self, mock_trip):
         trip = MockTrip(0, 1, 30, "Main Street", datetime.now(), "1st Ave", datetime.now())
-        mock_query.all.return_value = [trip]
+        mock_trip.query.all.return_value = [trip]
 
         rv = self.app.get('/trip')
         response_data = json.loads(rv.data.decode('UTF-8'))
@@ -49,20 +49,20 @@ class TripTestCase(unittest.TestCase):
         response_trip = response_data[0]
         self._verify_trip(response_trip, trip)
 
-    @mock.patch('bcycle.models.Trip.query')
-    def test_no_such_trip_endpoint(self, mock_query):
-        mock_query.get.return_value = None
+    @mock.patch('bcycle.views.Trip')
+    def test_no_such_trip_endpoint(self, mock_trip):
+        mock_trip.query.get.return_value = None
 
         rv = self.app.get('/trip/0')
         response_data = json.loads(rv.data.decode('UTF-8'))
 
         self.assertEqual(response_data['error'], 'no such trip')
 
-    @mock.patch('bcycle.models.Trip.query')
-    def test_trip_endpoint(self, mock_query):
+    @mock.patch('bcycle.views.Trip')
+    def test_trip_endpoint(self, mock_trip):
         trip = MockTrip(0, 1, 30, "Main Street", datetime.now(), "1st Ave", datetime.now())
 
-        mock_query.get.return_value = trip
+        mock_trip.query.get.return_value = trip
         rv = self.app.get('/trip/0')
         response_trip = json.loads(rv.data.decode('UTF-8'))
 
@@ -80,10 +80,10 @@ class RiderTestCase(unittest.TestCase):
         self.assertEqual(actual['membership_type'], expected.membership_type)
         self.assertEqual(actual['trips'], expected.trips)
 
-    @mock.patch('bcycle.models.Rider.query')
-    def test_get_riders(self, mock_query):
+    @mock.patch('bcycle.views.Rider')
+    def test_get_riders(self, mock_rider):
         rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
-        mock_query.all.return_value = [rider]
+        mock_rider.query.all.return_value = [rider]
 
         rv = self.app.get('/rider')
         response_data = json.loads(rv.data.decode('UTF-8'))
@@ -92,19 +92,19 @@ class RiderTestCase(unittest.TestCase):
         response_rider = response_data[0]
         self._verify_rider(response_rider, rider)
 
-    @mock.patch('bcycle.models.Rider.query')
-    def test_no_such_trip_endpoint(self, mock_query):
-        mock_query.get.return_value = None
+    @mock.patch('bcycle.views.Rider')
+    def test_no_such_trip_endpoint(self, mock_rider):
+        mock_rider.query.get.return_value = None
 
         rv = self.app.get('/rider/0')
         response_data = json.loads(rv.data.decode('UTF-8'))
 
         self.assertEqual(response_data['error'], 'no such rider')
 
-    @mock.patch('bcycle.models.Rider.query')
-    def test_trip_endpoint(self, mock_query):
+    @mock.patch('bcycle.views.Rider')
+    def test_trip_endpoint(self, mock_rider):
         rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
-        mock_query.get.return_value = rider
+        mock_rider.query.get.return_value = rider
 
         rv = self.app.get('/rider/0')
         response_data = json.loads(rv.data.decode('UTF-8'))
