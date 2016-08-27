@@ -1,3 +1,8 @@
+import sys
+import os
+# Add the top level of the repo so this script can import application modules
+sys.path.insert(0, os.path.dirname('..'))
+
 import csv
 
 from datetime import datetime
