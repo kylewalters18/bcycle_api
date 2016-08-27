@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/kylewalters18/bcycle_api.svg?branch=master)](https://travis-ci.org/kylewalters18/bcycle_api)
+[![Coverage Status](https://coveralls.io/repos/github/kylewalters18/bcycle_api/badge.svg?branch=master)](https://coveralls.io/github/kylewalters18/bcycle_api?branch=master)
+
 ## Running locally
 
 Install B-Cycle requirements
