@@ -4,7 +4,7 @@ from bcycle import app
 from bcycle.models import Trip, Rider
 
 
-def serialize(datetime):
+def serialize_date(datetime):
     return datetime.isoformat()
 
 
@@ -13,9 +13,9 @@ def format_trip(trip):
                           bike_id=trip.bike_id,
                           duration=trip.duration,
                           checkout_kiosk=trip.checkout_kiosk,
-                          checkout_datetime=serialize(trip.checkout_datetime),
+                          checkout_datetime=serialize_date(trip.checkout_datetime),
                           return_kiosk=trip.return_kiosk,
-                          return_datetime=serialize(trip.return_datetime))
+                          return_datetime=serialize_date(trip.return_datetime))
     return formatted_trip
 
 
