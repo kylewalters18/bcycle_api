@@ -102,7 +102,7 @@ class RiderTestCase(unittest.TestCase):
         self.assertEqual(response_data['error'], 'no such rider')
 
     @mock.patch('bcycle.models.Rider.query')
-    def test_no_such_trip_endpoint(self, mock_query):
+    def test_trip_endpoint(self, mock_query):
         rider = Rider(0, 'Denver B Cycle', 80202, 'annual', [])
         mock_query.get.return_value = rider
 

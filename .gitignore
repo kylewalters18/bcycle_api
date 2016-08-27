@@ -1,3 +1,8 @@
+# Development folders
 venv
 .idea
+htmlcov
+
+# Python
 *.pyc
+

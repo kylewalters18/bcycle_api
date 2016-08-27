@@ -1,0 +1,17 @@
+language:
+  python
+
+python:
+  - "3.5"
+
+install:
+  "pip install -r requirements.txt"
+
+script:
+  coverage run --source bcycle -m unittest discover -s tests -v
+
+env:
+  APP_SETTINGS=config.TestingConfig
+
+after_success:
+  coveralls

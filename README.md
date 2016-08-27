@@ -19,5 +19,6 @@ python manage.py db upgrade
 
 Run tests
 ```bash
-python -m unittest discover 
+coverage run --source bcycle -m unittest discover -s tests -v
+coverage report
 ```
