@@ -8,10 +8,10 @@ from unittest import mock
 from bcycle import app
 
 
-Trip = namedtuple('trip', ['id', 'bike_id', 'duration', 'checkout_kiosk',
+MockTrip = namedtuple('trip', ['id', 'bike_id', 'duration', 'checkout_kiosk',
                            'checkout_datetime', 'return_kiosk', 'return_datetime'])
 
-Rider = namedtuple('rider', ['id', 'program', 'zip_code', 'membership_type', 'trips'])
+MockRider = namedtuple('rider', ['id', 'program', 'zip_code', 'membership_type', 'trips'])
 
 
 class ApiTestCase(unittest.TestCase):
@@ -39,7 +39,7 @@ class TripTestCase(unittest.TestCase):
 
     @mock.patch('bcycle.models.Trip.query')
     def test_get_trips_endpoint(self, mock_query):
-        trip = Trip(0, 1, 30, "Main Street", datetime.now(), "1st Ave", datetime.now())
+        trip = MockTrip(0, 1, 30, "Main Street", datetime.now(), "1st Ave", datetime.now())
         mock_query.all.return_value = [trip]
 
         rv = self.app.get('/trip')
@@ -60,7 +60,7 @@ class TripTestCase(unittest.TestCase):
 
     @mock.patch('bcycle.models.Trip.query')
     def test_trip_endpoint(self, mock_query):
-        trip = Trip(0, 1, 30, "Main Street", datetime.now(), "1st Ave", datetime.now())
+        trip = MockTrip(0, 1, 30, "Main Street", datetime.now(), "1st Ave", datetime.now())
 
         mock_query.get.return_value = trip
         rv = self.app.get('/trip/0')
@@ -82,7 +82,7 @@ class RiderTestCase(unittest.TestCase):
 
     @mock.patch('bcycle.models.Rider.query')
     def test_get_riders(self, mock_query):
-        rider = Rider(0, 'Denver B Cycle', 80202, 'annual', [])
+        rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
         mock_query.all.return_value = [rider]
 
         rv = self.app.get('/rider')
@@ -103,7 +103,7 @@ class RiderTestCase(unittest.TestCase):
 
     @mock.patch('bcycle.models.Rider.query')
     def test_trip_endpoint(self, mock_query):
-        rider = Rider(0, 'Denver B Cycle', 80202, 'annual', [])
+        rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
         mock_query.get.return_value = rider
 
         rv = self.app.get('/rider/0')
