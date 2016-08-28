@@ -1,4 +1,4 @@
-import json
+from flask import jsonify
 
 from bcycle import app
 from bcycle.models import Trip, Rider
@@ -31,7 +31,7 @@ def format_rider(rider):
 @app.route('/trip')
 def get_trips():
     trips_result = [format_trip(trip) for trip in Trip.query.all()]
-    return json.dumps(trips_result)
+    return jsonify(trips_result)
 
 
 @app.route('/trip/<int:trip_id>')
@@ -39,15 +39,15 @@ def get_trip(trip_id):
     trip_result = Trip.query.get(trip_id)
     if trip_result:
         trip = format_trip(trip_result)
-        return json.dumps(trip)
+        return jsonify(trip)
     else:
-        return json.dumps({'error': 'no such trip'})
+        return jsonify({'error': 'no such trip'})
 
 
 @app.route('/rider')
 def get_riders():
     riders_result = [format_rider(rider) for rider in Rider.query.all()]
-    return json.dumps(riders_result)
+    return jsonify(riders_result)
 
 
 @app.route('/rider/<int:rider_id>')
@@ -55,11 +55,11 @@ def get_rider(rider_id):
     rider_result = Rider.query.get(rider_id)
     if rider_result:
         rider = format_rider(rider_result)
-        return json.dumps(rider)
+        return jsonify(rider)
     else:
-        return json.dumps({'error': 'no such rider'})
+        return jsonify({'error': 'no such rider'})
 
 
 @app.errorhandler(404)
 def not_found(error):
-    return json.dumps({'error': 'not found'}), 404
+    return jsonify({'error': 'not found'}), 404
