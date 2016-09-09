@@ -10,6 +10,28 @@ class Rider(db.Model):
     membership_type = db.Column(db.String)
     trips = db.relationship("Trip", backref="rider")
 
+    def to_dict(self):
+        return dict(id=self.id,
+                    program=self.program,
+                    zip_code=self.zip_code,
+                    membership_type=self.membership_type,
+                    trips=[trip.to_dict() for trip in self.trips])
+
+
+class Kiosk(db.Model):
+    __tablename__ = 'kiosk'
+    id = db.Column(db.Integer, primary_key=True)
+    kiosk_name = db.Column(db.String)
+    geocoded_name = db.Column(db.String)
+    lat = db.Column(db.Numeric(precision=9, scale=6))
+    lng = db.Column(db.Numeric(precision=9, scale=6))
+
+    def to_dict(self):
+        return dict(name=self.kiosk_name,
+                    address=self.geocoded_name,
+                    lat=float(self.lat),
+                    lon=float(self.lng))
+
 
 class Trip(db.Model):
     __tablename__ = 'trip'
@@ -17,8 +39,23 @@ class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bike_id = db.Column(db.Integer)
     checkout_datetime = db.Column(db.DateTime)
-    checkout_kiosk = db.Column(db.String)
+    checkout_kiosk_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
+    checkout_kiosk = db.relationship(Kiosk, foreign_keys=checkout_kiosk_id)
     return_datetime = db.Column(db.DateTime)
-    return_kiosk = db.Column(db.String)
+    return_kiosk_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
+    return_kiosk = db.relationship(Kiosk, foreign_keys=return_kiosk_id)
     duration = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('rider.id'))
+
+    def to_dict(self):
+        return dict(id=self.id,
+                    bike_id=self.bike_id,
+                    duration=self.duration,
+                    checkout_kiosk=self.checkout_kiosk.to_dict(),
+                    checkout_datetime=self._serialize_date(self.checkout_datetime),
+                    return_kiosk=self.return_kiosk.to_dict(),
+                    return_datetime=self._serialize_date(self.return_datetime))
+
+    def _serialize_date(self, datetime):
+        return datetime.isoformat()
+
