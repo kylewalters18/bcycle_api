@@ -52,7 +52,7 @@ class RiderCollection:
         return rider
 
 
-with open('data/subset_2015denverbcycletripdata_public.csv', 'r') as csvfile:
+with open('data/subset.csv', 'r') as csvfile:
     reader = csv.DictReader(csvfile, delimiter=',')
 
     rider_collection = RiderCollection()

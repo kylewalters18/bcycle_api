@@ -27,7 +27,7 @@ def geocode(place):
     return formatted_address, lat, lng
 
 
-with open('data/subset_2015denverbcycletripdata_public.csv', 'r') as csvfile:
+with open('data/subset.csv', 'r') as csvfile:
     kiosks = []
     reader = csv.DictReader(csvfile, delimiter=',')
 
