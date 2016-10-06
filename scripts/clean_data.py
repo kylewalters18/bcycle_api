@@ -1,7 +1,8 @@
-import pandas
+import pandas as pd
 
 
-df = pandas.read_csv('data/2015denverbcycletripdata_public.csv')
+df = pd.read_csv('data/2015denverbcycletripdata_public.csv',
+                 dtype={'Zip': pd.np.object, 'Bike': pd.np.object})
 
 # Remove Trips with a Special Event location (outside of the permanent 87 locations)
 df = df[df['Return Kiosk'] != 'Special Events']
