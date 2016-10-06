@@ -15,7 +15,7 @@ class Rider(db.Model):
                     program=self.program,
                     zip_code=self.zip_code,
                     membership_type=self.membership_type,
-                    trips=[trip.to_dict() for trip in self.trips])
+                    trip_ids=[trip.id for trip in self.trips])
 
 
 class Kiosk(db.Model):
@@ -30,7 +30,8 @@ class Kiosk(db.Model):
         return dict(name=self.kiosk_name,
                     address=self.geocoded_name,
                     lat=float(self.lat),
-                    lon=float(self.lng))
+                    lon=float(self.lng),
+                    id=self.id)
 
 
 class Trip(db.Model):
@@ -51,9 +52,9 @@ class Trip(db.Model):
         return dict(id=self.id,
                     bike_id=self.bike_id,
                     duration=self.duration,
-                    checkout_kiosk=self.checkout_kiosk.to_dict(),
+                    checkout_kiosk_id=self.checkout_kiosk.id,
                     checkout_datetime=self._serialize_date(self.checkout_datetime),
-                    return_kiosk=self.return_kiosk.to_dict(),
+                    return_kiosk_id=self.return_kiosk.id,
                     return_datetime=self._serialize_date(self.return_datetime))
 
     def _serialize_date(self, datetime):
