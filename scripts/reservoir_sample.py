@@ -7,7 +7,7 @@ desired_num_results = 1000
 
 chances_selected = desired_num_results / total_entries
 
-with open('data/2015denverbcycletripdata_public.csv', 'r') as input_file:
+with open('data/cleaned_data.csv', 'r') as input_file:
     reader = csv.reader(input_file, delimiter=',')
 
     sample = []
