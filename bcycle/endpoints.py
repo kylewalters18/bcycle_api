@@ -2,6 +2,7 @@ from flask import jsonify
 
 from bcycle import app
 from bcycle.models import Kiosk, Trip, Rider
+from bcycle.decorators import no_resource_error_handler
 
 
 @app.route('/trip')
@@ -11,13 +12,10 @@ def get_trips():
 
 
 @app.route('/trip/<int:trip_id>')
+@no_resource_error_handler
 def get_trip(trip_id):
-    trip_result = Trip.query.get(trip_id)
-    if trip_result:
-        trip = trip_result.to_dict()
-        return jsonify(trip)
-    else:
-        return jsonify({'error': 'no such trip'})
+    trip = Trip.query.get(trip_id)
+    return jsonify(trip.to_dict())
 
 
 @app.route('/rider')
@@ -27,13 +25,10 @@ def get_riders():
 
 
 @app.route('/rider/<int:rider_id>')
+@no_resource_error_handler
 def get_rider(rider_id):
-    rider_result = Rider.query.get(rider_id)
-    if rider_result:
-        rider = rider_result.to_dict()
-        return jsonify(rider)
-    else:
-        return jsonify({'error': 'no such rider'})
+    rider = Rider.query.get(rider_id)
+    return jsonify(rider.to_dict())
 
 
 @app.route('/kiosk')
@@ -42,6 +37,13 @@ def get_kiosks():
     return jsonify(kiosks)
 
 
+@app.route('/kiosk/<int:kiosk_id>')
+@no_resource_error_handler
+def get_kiosk(kiosk_id):
+    kiosk = Kiosk.query.get(kiosk_id)
+    return jsonify(kiosk.to_dict())
+
+
 @app.errorhandler(404)
-def not_found(error):
-    return jsonify({'error': 'not found'}), 404
+def not_found():
+    return jsonify({'error': 'endpoint does not exist'}), 404

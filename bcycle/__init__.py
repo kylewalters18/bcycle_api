@@ -10,5 +10,5 @@ CORS(app, origins=['*'])
 
 db = SQLAlchemy(app)
 
-from bcycle import views
+from bcycle import endpoints
 from bcycle import models
