@@ -9,3 +9,5 @@ df = df[df['Return Kiosk'] != 'UMS']
 df = df[df['Return Kiosk'] != 'DBS LARIMER WAREHOUSE']
 df = df[df['Return Kiosk'] != 'Cherry Creek Arts Festival Event Kiosk']
 df = df[df['Return Kiosk'] != 'Broncos Bike Valet']
+
+df.to_csv('data/cleaned_data.csv', index=False)
