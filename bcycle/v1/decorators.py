@@ -37,7 +37,6 @@ def paginate(collection, page=1, limit=25):
 
             requested_limit = request.args.get('limit', type=int, default=limit)
             requested_page = request.args.get('page', type=int, default=page)
-            print(requested_page)
 
             items = [item.to_dict() for item in query.paginate(page=requested_page,
                                                                per_page=requested_limit).items]

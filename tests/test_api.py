@@ -23,7 +23,10 @@ class ApiTestCase(unittest.TestCase):
 
     def test_404_not_found(self):
         rv = self.app.get('/this_route_doesnt_exists')
-        self.assertEqual({'error': 'endpoint does not exist'}, json.loads(rv.data.decode('UTF-8')))
+        json_rv = json.loads(rv.data.decode('UTF-8'))
+        self.assertEqual(json_rv['status'], 404)
+        self.assertEqual(json_rv['error'], 'not found')
+        self.assertEqual(json_rv['message'], 'invalid resource URI')
 
 
 class TripTestCase(unittest.TestCase):

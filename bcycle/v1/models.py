@@ -27,11 +27,16 @@ class Kiosk(db.Model):
     lng = db.Column(db.Numeric(precision=9, scale=6))
 
     def to_dict(self):
+        originating_trips = Trip.query.filter_by(checkout_kiosk=self).all()
+        destination_trips = Trip.query.filter_by(return_kiosk=self).all()
+
         return dict(name=self.kiosk_name,
                     address=self.geocoded_name,
                     lat=float(self.lat),
                     lon=float(self.lng),
-                    id=self.id)
+                    id=self.id,
+                    total_originating_trips=len(originating_trips),
+                    total_destination_trips=len(destination_trips))
 
 
 class Trip(db.Model):
