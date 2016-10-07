@@ -37,13 +37,17 @@ def paginate(collection, page=1, limit=25):
 
             requested_limit = request.args.get('limit', type=int, default=limit)
             requested_page = request.args.get('page', type=int, default=page)
+            print(requested_page)
 
             items = [item.to_dict() for item in query.paginate(page=requested_page,
                                                                per_page=requested_limit).items]
 
             response = {
                 collection: items,
-                'next': url_for(request.endpoint, limit=limit, page=page+1, _external=True),
+                'next': url_for(request.endpoint,
+                                limit=requested_limit,
+                                page=requested_page+1,
+                                _external=True),
                 'total': query.count()
             }
             return jsonify(response)
