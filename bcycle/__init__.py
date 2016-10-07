@@ -12,4 +12,4 @@ db = SQLAlchemy(app)
 from bcycle.v1 import v1_blueprint
 app.register_blueprint(v1_blueprint, url_prefix='/v1')
 
-from bcycle import endpoints
+from bcycle import errors
