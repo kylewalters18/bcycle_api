@@ -1,13 +1,14 @@
-import os
-import sys
-import googlemaps
 import csv
+import sys
+
+import googlemaps
+import os
 
 # Add the top level of the repo so this script can import application modules
 sys.path.insert(0, os.path.dirname('..'))
 
 from bcycle import db
-from bcycle.models import Kiosk, Trip
+from bcycle.v1.models import Kiosk, Trip
 
 
 api_key = os.environ['GOOGLE_API_KEY']

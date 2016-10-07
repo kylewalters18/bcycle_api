@@ -22,7 +22,7 @@ class ApiTestCase(unittest.TestCase):
 
     def test_404_not_found(self):
         rv = self.app.get('/this_route_doesnt_exists')
-        self.assertEqual({"error": "not found"}, json.loads(rv.data.decode('UTF-8')))
+        self.assertEqual({'error': 'endpoint does not exist'}, json.loads(rv.data.decode('UTF-8')))
 
 
 class TripTestCase(unittest.TestCase):
@@ -39,35 +39,35 @@ class TripTestCase(unittest.TestCase):
         self.assertEqual(actual['return_kiosk'], expected.return_kiosk)
         self.assertEqual(actual['return_datetime'], expected.return_datetime)
 
-    @mock.patch('bcycle.views.Trip')
+    @mock.patch('bcycle.v1.endpoints.Trip')
     def test_get_trips_endpoint(self, mock_trip):
         test_time = datetime.now().isoformat()
-        trip = MockTrip(0, 1, 30, "Main Street", test_time, "1st Ave", test_time)
+        trip = MockTrip(0, 1, 30, 'Main Street', test_time, '1st Ave', test_time)
         mock_trip.query.all.return_value = [Container(lambda: trip._asdict())]
 
-        rv = self.app.get('/trip')
+        rv = self.app.get('/v1/trip')
         response_data = json.loads(rv.data.decode('UTF-8'))
         self.assertEqual(len(response_data), 1)
 
         response_trip = response_data[0]
         self._verify_trip(response_trip, trip)
 
-    @mock.patch('bcycle.views.Trip')
+    @mock.patch('bcycle.v1.endpoints.Trip')
     def test_no_such_trip_endpoint(self, mock_trip):
         mock_trip.query.get.return_value = None
 
-        rv = self.app.get('/trip/0')
+        rv = self.app.get('/v1/trip/0')
         response_data = json.loads(rv.data.decode('UTF-8'))
 
-        self.assertEqual(response_data['error'], 'no such trip')
+        self.assertEqual(response_data['error'], 'resource does not exist')
 
-    @mock.patch('bcycle.views.Trip')
+    @mock.patch('bcycle.v1.endpoints.Trip')
     def test_trip_endpoint(self, mock_trip):
         test_time = datetime.now().isoformat()
-        trip = MockTrip(0, 1, 30, "Main Street", test_time, "1st Ave", test_time)
+        trip = MockTrip(0, 1, 30, 'Main Street', test_time, '1st Ave', test_time)
 
         mock_trip.query.get.return_value = Container(lambda: trip._asdict())
-        rv = self.app.get('/trip/0')
+        rv = self.app.get('/v1/trip/0')
         response_trip = json.loads(rv.data.decode('UTF-8'))
 
         self._verify_trip(response_trip, trip)
@@ -84,33 +84,33 @@ class RiderTestCase(unittest.TestCase):
         self.assertEqual(actual['membership_type'], expected.membership_type)
         self.assertEqual(actual['trips'], expected.trips)
 
-    @mock.patch('bcycle.views.Rider')
+    @mock.patch('bcycle.v1.endpoints.Rider')
     def test_get_riders(self, mock_rider):
         rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
         mock_rider.query.all.return_value = [Container(lambda: rider._asdict())]
 
-        rv = self.app.get('/rider')
+        rv = self.app.get('/v1/rider')
         response_data = json.loads(rv.data.decode('UTF-8'))
         self.assertEqual(len(response_data), 1)
 
         response_rider = response_data[0]
         self._verify_rider(response_rider, rider)
 
-    @mock.patch('bcycle.views.Rider')
+    @mock.patch('bcycle.v1.endpoints.Rider')
     def test_no_such_trip_endpoint(self, mock_rider):
         mock_rider.query.get.return_value = None
 
-        rv = self.app.get('/rider/0')
+        rv = self.app.get('/v1/rider/0')
         response_data = json.loads(rv.data.decode('UTF-8'))
 
-        self.assertEqual(response_data['error'], 'no such rider')
+        self.assertEqual(response_data['error'], 'resource does not exist')
 
-    @mock.patch('bcycle.views.Rider')
+    @mock.patch('bcycle.v1.endpoints.Rider')
     def test_trip_endpoint(self, mock_rider):
         rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
         mock_rider.query.get.return_value = Container(lambda: rider._asdict())
 
-        rv = self.app.get('/rider/0')
+        rv = self.app.get('/v1/rider/0')
         response_data = json.loads(rv.data.decode('UTF-8'))
 
         self._verify_rider(response_data, rider)
