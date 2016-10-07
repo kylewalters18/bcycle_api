@@ -13,7 +13,8 @@ MockTrip = namedtuple('trip', ['id', 'bike_id', 'duration', 'checkout_kiosk', 'c
 
 MockRider = namedtuple('rider', ['id', 'program', 'zip_code', 'membership_type', 'trips'])
 
-Container = namedtuple('container', 'to_dict')
+DictContainer = namedtuple('container', 'to_dict')
+ItemContainer = namedtuple('item_container', 'items')
 
 
 class ApiTestCase(unittest.TestCase):
@@ -43,13 +44,16 @@ class TripTestCase(unittest.TestCase):
     def test_get_trips_endpoint(self, mock_trip):
         test_time = datetime.now().isoformat()
         trip = MockTrip(0, 1, 30, 'Main Street', test_time, '1st Ave', test_time)
-        mock_trip.query.all.return_value = [Container(lambda: trip._asdict())]
+        mock_trip.query.paginate.return_value = ItemContainer(
+            [DictContainer(lambda: trip._asdict())]
+        )
+        mock_trip.query.count.return_value = 1
 
         rv = self.app.get('/v1/trip')
         response_data = json.loads(rv.data.decode('UTF-8'))
-        self.assertEqual(len(response_data), 1)
+        self.assertEqual(len(response_data['trips']), 1)
 
-        response_trip = response_data[0]
+        response_trip = response_data['trips'][0]
         self._verify_trip(response_trip, trip)
 
     @mock.patch('bcycle.v1.endpoints.Trip')
@@ -66,7 +70,7 @@ class TripTestCase(unittest.TestCase):
         test_time = datetime.now().isoformat()
         trip = MockTrip(0, 1, 30, 'Main Street', test_time, '1st Ave', test_time)
 
-        mock_trip.query.get.return_value = Container(lambda: trip._asdict())
+        mock_trip.query.get.return_value = DictContainer(lambda: trip._asdict())
         rv = self.app.get('/v1/trip/0')
         response_trip = json.loads(rv.data.decode('UTF-8'))
 
@@ -87,13 +91,16 @@ class RiderTestCase(unittest.TestCase):
     @mock.patch('bcycle.v1.endpoints.Rider')
     def test_get_riders(self, mock_rider):
         rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
-        mock_rider.query.all.return_value = [Container(lambda: rider._asdict())]
+        mock_rider.query.paginate.return_value = ItemContainer(
+            [DictContainer(lambda: rider._asdict())]
+        )
+        mock_rider.query.count.return_value = 1
 
         rv = self.app.get('/v1/rider')
         response_data = json.loads(rv.data.decode('UTF-8'))
-        self.assertEqual(len(response_data), 1)
+        self.assertEqual(len(response_data['riders']), 1)
 
-        response_rider = response_data[0]
+        response_rider = response_data['riders'][0]
         self._verify_rider(response_rider, rider)
 
     @mock.patch('bcycle.v1.endpoints.Rider')
@@ -108,7 +115,7 @@ class RiderTestCase(unittest.TestCase):
     @mock.patch('bcycle.v1.endpoints.Rider')
     def test_trip_endpoint(self, mock_rider):
         rider = MockRider(0, 'Denver B Cycle', 80202, 'annual', [])
-        mock_rider.query.get.return_value = Container(lambda: rider._asdict())
+        mock_rider.query.get.return_value = DictContainer(lambda: rider._asdict())
 
         rv = self.app.get('/v1/rider/0')
         response_data = json.loads(rv.data.decode('UTF-8'))
