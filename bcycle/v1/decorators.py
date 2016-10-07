@@ -43,7 +43,7 @@ def paginate(collection, page=1, limit=25):
 
             response = {
                 collection: items,
-                'next': url_for(request.endpoint, limit=limit, page=page+1),
+                'next': url_for(request.endpoint, limit=limit, page=page+1, _external=True),
                 'total': query.count()
             }
             return jsonify(response)
