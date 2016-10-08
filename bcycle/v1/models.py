@@ -1,3 +1,5 @@
+from flask import url_for
+
 from bcycle import db
 
 
@@ -55,9 +57,15 @@ class Trip(db.Model):
         return dict(id=self.id,
                     bike_id=self.bike_id,
                     duration=self.duration,
-                    checkout_kiosk_id=self.checkout_kiosk.id,
+                    checkout_kiosk=dict(
+                        kiosk_id=self.checkout_kiosk.id,
+                        href=url_for('v1.get_kiosk', kiosk_id=self.checkout_kiosk.id, _external=True)
+                    ),
                     checkout_datetime=self._serialize_date(self.checkout_datetime),
-                    return_kiosk_id=self.return_kiosk.id,
+                    return_kiosk=dict(
+                        kiosk_id=self.return_kiosk.id,
+                        href=url_for('v1.get_kiosk', kiosk_id=self.return_kiosk.id, _external=True)
+                    ),
                     return_datetime=self._serialize_date(self.return_datetime))
 
     def _serialize_date(self, datetime):
