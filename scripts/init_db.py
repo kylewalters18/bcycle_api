@@ -13,6 +13,7 @@ from bcycle.v1.models import Kiosk, Rider, Trip
 
 Trip.query.delete()
 Rider.query.delete()
+Kiosk.query.delete()
 
 
 def format_datetime(date, time):
@@ -51,6 +52,18 @@ class RiderCollection:
             db.session.add(rider)
         return rider
 
+
+with open('data/geocode_stations.csv', 'r') as csvfile:
+    reader = csv.DictReader(csvfile, delimiter=',')
+    for row in reader:
+        kiosk = Kiosk(
+            kiosk_name=row['name'],
+            lat=row['lat'],
+            lng=row['lng']
+        )
+
+        db.session.add(kiosk)
+    db.session.commit()
 
 with open('data/subset.csv', 'r') as csvfile:
     reader = csv.DictReader(csvfile, delimiter=',')

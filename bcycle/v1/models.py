@@ -22,7 +22,6 @@ class Kiosk(db.Model):
     __tablename__ = 'kiosk'
     id = db.Column(db.Integer, primary_key=True)
     kiosk_name = db.Column(db.String)
-    geocoded_name = db.Column(db.String)
     lat = db.Column(db.Numeric(precision=9, scale=6))
     lng = db.Column(db.Numeric(precision=9, scale=6))
 
@@ -31,7 +30,6 @@ class Kiosk(db.Model):
         destination_trips = Trip.query.filter_by(return_kiosk=self).all()
 
         return dict(name=self.kiosk_name,
-                    address=self.geocoded_name,
                     lat=float(self.lat),
                     lon=float(self.lng),
                     id=self.id,
