@@ -65,3 +65,12 @@ class Trip(db.Model):
     def _serialize_date(self, datetime):
         return datetime.isoformat()
 
+
+class Route(db.Model):
+    __tablename__ = 'route'
+
+    id = db.Column(db.Integer, primary_key=True)
+    checkout_kiosk_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
+    checkout_kiosk = db.relationship(Kiosk, foreign_keys=checkout_kiosk_id)
+    return_kiosk_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
+    return_kiosk = db.relationship(Kiosk, foreign_keys=return_kiosk_id)

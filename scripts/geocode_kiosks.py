@@ -1,49 +1,54 @@
 import csv
-import sys
+import time
 
-import googlemaps
-import os
+from geopy.geocoders import Nominatim
 
-# Add the top level of the repo so this script can import application modules
-sys.path.insert(0, os.path.dirname('..'))
-
-from bcycle import db
-from bcycle.v1.models import Kiosk, Trip
+geolocator = Nominatim()
 
 
-api_key = os.environ['GOOGLE_API_KEY']
-gmaps = googlemaps.Client(key=api_key)
-
-Trip.query.delete()
-Kiosk.query.delete()
+class LocationNotFoundException(Exception):
+    pass
 
 
-def geocode(place):
-    geocode_result = gmaps.geocode(place)
+def geocode(name, address):
+    geocode_location = geolocator.geocode(address, timeout=10)
 
-    formatted_address = geocode_result[0]['formatted_address']
-    lat = geocode_result[0]['geometry']['location']['lat']
-    lng = geocode_result[0]['geometry']['location']['lng']
+    if geocode_location is None:
+        geocode_location = geolocator.geocode(name + ' Denver Bcycle', timeout=10)
+    if geocode_location is None:
+        geocode_location = geolocator.geocode(name + ' Denver B-Cycle Station', timeout=10)
+    if geocode_location is None:
+        geocode_location = geolocator.geocode(name + ' Denver, CO')
+    if geocode_location:
+        return geocode_location.latitude, geocode_location.longitude
+    else:
+        raise LocationNotFoundException(address)
 
-    return formatted_address, lat, lng
 
-
-with open('data/subset.csv', 'r') as csvfile:
+with open('data/stations.csv', 'r') as csvfile:
     kiosks = []
     reader = csv.DictReader(csvfile, delimiter=',')
 
+    geocode_rows = []
     for row in reader:
-        kiosks.append(row['checkout_kiosk'])
-        kiosks.append(row['return_kiosk'])
+        try:
+            lat, lng = geocode(row['name'], row['address'])
+            geocode_rows.append(dict(
+                name=row['name'],
+                address=row['address'],
+                lat=lat,
+                lng=lng
+            ))
+        except LocationNotFoundException as e:
+            print(row['name'])
+            print(row['address'])
+            print("\n")
 
-    for b_cycle_kiosk in set(kiosks):
-        address, lat, lng = geocode(b_cycle_kiosk + ' Denver, CO')
+        time.sleep(2)
 
-        kiosk = Kiosk(kiosk_name=b_cycle_kiosk,
-                      geocoded_name=address,
-                      lat=lat,
-                      lng=lng)
+    with open('data/geocode_stations.csv', 'w') as csvout:
+        fieldnames = ['name', 'address', 'lat', 'lng']
+        writer = csv.DictWriter(csvout, fieldnames=fieldnames)
 
-        db.session.add(kiosk)
-
-    db.session.commit()
+        writer.writeheader()
+        writer.writerows(geocode_rows)
