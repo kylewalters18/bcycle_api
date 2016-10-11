@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from bcycle.v1 import v1_blueprint
-from bcycle.v1.models import Kiosk, Trip, Rider
+from bcycle.v1.models import Kiosk, Trip, Rider, Route
 from bcycle.v1.decorators import no_resource_error_handler, paginate
 
 
@@ -42,3 +42,16 @@ def get_kiosks():
 def get_kiosk(kiosk_id):
     kiosk = Kiosk.query.get(kiosk_id)
     return jsonify(kiosk.to_dict())
+
+
+@v1_blueprint.route('/route')
+@paginate('routes')
+def get_routes():
+    return Route.query
+
+
+@v1_blueprint.route('/route/<int:route_id>')
+@no_resource_error_handler
+def get_route(route_id):
+    route = Route.query.get(route_id)
+    return jsonify(route.to_dict())

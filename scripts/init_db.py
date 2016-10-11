@@ -8,12 +8,13 @@ import os
 sys.path.insert(0, os.path.dirname('..'))
 
 from bcycle import db
-from bcycle.v1.models import Kiosk, Rider, Trip
+from bcycle.v1.models import Kiosk, Rider, Trip, Route
 
 
 Trip.query.delete()
 Rider.query.delete()
 Kiosk.query.delete()
+Route.query.delete()
 
 
 def format_datetime(date, time):
@@ -75,4 +76,26 @@ with open('data/subset.csv', 'r') as csvfile:
 
         rider.trips.append(trip)
 
+    db.session.commit()
+
+with open('data/subset.csv', 'r') as csvfile:
+    reader = csv.DictReader(csvfile, delimiter=',')
+
+    kiosk_pairs = set()
+    for row in reader:
+        start = row['checkout_kiosk']
+        end = row['return_kiosk']
+
+        kiosk_pairs.add((start, end))
+
+    for pair in kiosk_pairs:
+        checkout_kiosk = Kiosk.query.filter_by(kiosk_name=pair[0]).first()
+        return_kiosk = Kiosk.query.filter_by(kiosk_name=pair[1]).first()
+
+        route = Route(
+            kiosk_one=checkout_kiosk,
+            kiosk_two=return_kiosk
+        )
+
+        db.session.add(route)
     db.session.commit()

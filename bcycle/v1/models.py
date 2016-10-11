@@ -76,7 +76,28 @@ class Route(db.Model):
     __tablename__ = 'route'
 
     id = db.Column(db.Integer, primary_key=True)
-    checkout_kiosk_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
-    checkout_kiosk = db.relationship(Kiosk, foreign_keys=checkout_kiosk_id)
-    return_kiosk_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
-    return_kiosk = db.relationship(Kiosk, foreign_keys=return_kiosk_id)
+    kiosk_one_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
+    kiosk_one = db.relationship(Kiosk, foreign_keys=kiosk_one_id)
+    kiosk_two_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
+    kiosk_two = db.relationship(Kiosk, foreign_keys=kiosk_two_id)
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            route=[
+                dict(
+                    lat=float(self.kiosk_one.lat),
+                    lon=float(self.kiosk_one.lng)),
+                dict(
+                    lat=float(self.kiosk_two.lat),
+                    lon=float(self.kiosk_two.lng))
+            ],
+            kiosk_one=dict(
+                kiosk_id=self.kiosk_one_id,
+                href=url_for('v1.get_kiosk', kiosk_id=self.kiosk_one.id, _external=True)
+            ),
+            kiosk_two=dict(
+                kiosk_id=self.kiosk_two_id,
+                href=url_for('v1.get_kiosk', kiosk_id=self.kiosk_two.id, _external=True)
+            ),
+        )
