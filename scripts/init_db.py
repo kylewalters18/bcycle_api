@@ -1,8 +1,10 @@
 import csv
+import json
+import random
 import sys
-from datetime import datetime
-
 import os
+
+from datetime import datetime
 
 # Add the top level of the repo so this script can import application modules
 sys.path.insert(0, os.path.dirname('..'))
@@ -10,11 +12,10 @@ sys.path.insert(0, os.path.dirname('..'))
 from bcycle import db
 from bcycle.v1.models import Kiosk, Rider, Trip, Route
 
-
+Route.query.delete()
 Trip.query.delete()
 Rider.query.delete()
 Kiosk.query.delete()
-Route.query.delete()
 
 
 def format_datetime(date, time):
@@ -78,24 +79,20 @@ with open('data/subset.csv', 'r') as csvfile:
 
     db.session.commit()
 
-with open('data/subset.csv', 'r') as csvfile:
-    reader = csv.DictReader(csvfile, delimiter=',')
+with open('data/routes.json') as data_file:
+    routes = json.load(data_file)
 
-    kiosk_pairs = set()
-    for row in reader:
-        start = row['checkout_kiosk']
-        end = row['return_kiosk']
+    # for route in random.sample(routes, 300):
+    # for route in [r for r in routes if r['source']['name'] == 'REI' or r['target']['name'] == 'REI']:
+    for route in routes:
+        source = Kiosk.query.filter_by(kiosk_name=route['source']['name']).first()
+        target = Kiosk.query.filter_by(kiosk_name=route['target']['name']).first()
 
-        kiosk_pairs.add((start, end))
-
-    for pair in kiosk_pairs:
-        checkout_kiosk = Kiosk.query.filter_by(kiosk_name=pair[0]).first()
-        return_kiosk = Kiosk.query.filter_by(kiosk_name=pair[1]).first()
-
-        route = Route(
-            kiosk_one=checkout_kiosk,
-            kiosk_two=return_kiosk
+        route_record = Route(
+            kiosk_one=source,
+            kiosk_two=target,
+            coordinates=route['coordinates']
         )
 
-        db.session.add(route)
-    db.session.commit()
+        db.session.add(route_record)
+        db.session.commit()

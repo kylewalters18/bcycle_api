@@ -1,4 +1,5 @@
 from flask import url_for
+from sqlalchemy.dialects import postgresql
 
 from bcycle import db
 
@@ -81,17 +82,14 @@ class Route(db.Model):
     kiosk_two_id = db.Column(db.Integer, db.ForeignKey('kiosk.id'))
     kiosk_two = db.relationship(Kiosk, foreign_keys=kiosk_two_id)
 
+    # Ideally capture relationship in coordinates table or even better, use PostGIS
+    # Due to desire to stay under Heroku's 10,000 row cap for Hobby tier
+    coordinates = db.Column(postgresql.JSON)
+
     def to_dict(self):
         return dict(
             id=self.id,
-            route=[
-                dict(
-                    lat=float(self.kiosk_one.lat),
-                    lon=float(self.kiosk_one.lng)),
-                dict(
-                    lat=float(self.kiosk_two.lat),
-                    lon=float(self.kiosk_two.lng))
-            ],
+            route=[{'lat': lat, 'lon': lon} for lon, lat in self.coordinates],
             kiosk_one=dict(
                 kiosk_id=self.kiosk_one_id,
                 href=url_for('v1.get_kiosk', kiosk_id=self.kiosk_one.id, _external=True)

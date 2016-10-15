@@ -7,3 +7,6 @@ htmlcov
 
 # Python
 *.pyc
+
+# MacOSX
+.DS_store
