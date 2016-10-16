@@ -1,8 +1,8 @@
 import csv
 import json
-import random
 import sys
 import os
+import random
 
 from datetime import datetime
 
@@ -67,11 +67,11 @@ with open('data/geocode_stations.csv', 'r') as csvfile:
         db.session.add(kiosk)
     db.session.commit()
 
-with open('data/subset.csv', 'r') as csvfile:
+with open('data/cleaned_data.csv', 'r') as csvfile:
     reader = csv.DictReader(csvfile, delimiter=',')
 
     rider_collection = RiderCollection()
-    for row in reader:
+    for row in random.sample([row for row in reader], 1000):
         trip = add_trip(row)
         rider = rider_collection.get_rider(row['user_id'])
 
@@ -82,8 +82,6 @@ with open('data/subset.csv', 'r') as csvfile:
 with open('data/routes.json') as data_file:
     routes = json.load(data_file)
 
-    # for route in random.sample(routes, 300):
-    # for route in [r for r in routes if r['source']['name'] == 'REI' or r['target']['name'] == 'REI']:
     for route in routes:
         source = Kiosk.query.filter_by(kiosk_name=route['source']['name']).first()
         target = Kiosk.query.filter_by(kiosk_name=route['target']['name']).first()

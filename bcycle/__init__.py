@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 
 # Ideally use Nginx for CORS and gzip compression
-# Not sure if possible with heroku deployment
+# Not sure if possible with Heroku deployment
 Compress(app)
 CORS(app, origins=['*'])
 

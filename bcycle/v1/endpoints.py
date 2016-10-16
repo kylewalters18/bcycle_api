@@ -47,13 +47,6 @@ def get_kiosk(kiosk_id):
 
 @v1_blueprint.route('/kiosk/<int:kiosk_id>/neighbors')
 def kiosk_neighbors(kiosk_id):
-    """
-    Retrieves the adjacency list of the requested kiosk
-
-    :param kiosk_id: requested kiosk
-    :return: jsonified adjacency list
-    """
-
     kiosk = Kiosk.query.get(kiosk_id)
     route = Route.query.filter(or_(Route.kiosk_one == kiosk, Route.kiosk_two == kiosk)).all()
     return jsonify(dict(routes=[r.to_dict() for r in route]))
