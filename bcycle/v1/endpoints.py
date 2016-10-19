@@ -47,8 +47,10 @@ def get_kiosk(kiosk_id):
 
 @v1_blueprint.route('/kiosk/<int:kiosk_id>/neighbors')
 def kiosk_neighbors(kiosk_id):
-    kiosk = Kiosk.query.get(kiosk_id)
-    route = Route.query.filter(or_(Route.kiosk_one == kiosk, Route.kiosk_two == kiosk)).all()
+    route = Route.query.filter(or_(
+        Route.kiosk_one_id == kiosk_id,
+        Route.kiosk_two_id == kiosk_id)
+    ).all()
     return jsonify(dict(routes=[r.to_dict() for r in route]))
 
 
