@@ -2,7 +2,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/kylewalters18/bcycle_api/badge.svg?branch=master)](https://coveralls.io/github/kylewalters18/bcycle_api?branch=master)
 
 # Denver Bcycle API
-This is a REST API that exposes the publicaly available Denver Bcycle rider trip data.
+This is a REST API that exposes the publicaly available Denver Bcycle rider trip data. Each version is implemented as a Flask blueprint.
+
 Below are instructions on how to set up your development environment.
 
 
