@@ -1,6 +1,11 @@
 [![Build Status](https://travis-ci.org/kylewalters18/bcycle_api.svg?branch=master)](https://travis-ci.org/kylewalters18/bcycle_api)
 [![Coverage Status](https://coveralls.io/repos/github/kylewalters18/bcycle_api/badge.svg?branch=master)](https://coveralls.io/github/kylewalters18/bcycle_api?branch=master)
 
+# Denver Bcycle API
+This is a REST API that exposes the publicaly available Denver Bcycle rider trip data.
+Below are instructions on how to set up your development environment.
+
+
 ## Running locally
 
 Install B-Cycle requirements
