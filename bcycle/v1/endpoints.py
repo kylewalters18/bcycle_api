@@ -49,17 +49,21 @@ def get_kiosk(kiosk_id):
 def kiosk_neighbors(kiosk_id):
     kiosk = Kiosk.query.get(kiosk_id)
 
-    route = Route.query.filter(or_(
-        Route.kiosk_one_id == kiosk_id,
-        Route.kiosk_two_id == kiosk_id)
-    ).all()
+    route = Route.query.join(Kiosk, or_(
+            Route.kiosk_one_id == Kiosk.id,
+            Route.kiosk_two_id == Kiosk.id))\
+        .filter(or_(
+            Route.kiosk_one_id == kiosk_id,
+            Route.kiosk_two_id == kiosk_id)
+        )\
+        .all()
 
     return jsonify(dict(
         kiosk=kiosk.to_dict(),
         neighbors=[dict(
             id=r.id,
             route=[{'lat': lat, 'lon': lon} for lon, lat in r.coordinates],
-            kiosk=r.kiosk_one.to_dict() if r.kiosk_one_id != kiosk_id else r.kiosk_two.to_dict()
+            kiosk={'name': r.kiosk_one.kiosk_name} if r.kiosk_one_id != kiosk_id else {'name': r.kiosk_two.kiosk_name}
         ) for r in route]
     ))
 
