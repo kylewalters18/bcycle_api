@@ -46,6 +46,7 @@ def get_kiosk(kiosk_id):
 
 
 @v1_blueprint.route('/kiosk/<int:kiosk_id>/neighbors')
+@no_resource_error_handler
 def kiosk_neighbors(kiosk_id):
     kiosk = Kiosk.query.get(kiosk_id)
 
