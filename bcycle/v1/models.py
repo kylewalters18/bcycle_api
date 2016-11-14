@@ -53,11 +53,13 @@ class Trip(db.Model):
     return_kiosk = db.relationship(Kiosk, foreign_keys=return_kiosk_id)
     duration = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('rider.id'))
+    route_id = db.Column(db.Integer, db.ForeignKey('route.id'))
 
     def to_dict(self):
         return dict(id=self.id,
                     bike_id=self.bike_id,
                     duration=self.duration,
+                    route=url_for('v1.get_route', route_id=self.route_id, _external=True),
                     checkout_kiosk=dict(
                         kiosk_id=self.checkout_kiosk.id,
                         href=url_for('v1.get_kiosk', kiosk_id=self.checkout_kiosk.id, _external=True)
@@ -92,10 +94,10 @@ class Route(db.Model):
             route=[{'lat': lat, 'lon': lon} for lon, lat in self.coordinates],
             kiosk_one=dict(
                 kiosk_id=self.kiosk_one_id,
-                href=url_for('v1.get_kiosk', kiosk_id=self.kiosk_one.id, _external=True)
+                href=url_for('v1.get_kiosk', kiosk_id=self.kiosk_one.id, _external=True),
             ),
             kiosk_two=dict(
                 kiosk_id=self.kiosk_two_id,
-                href=url_for('v1.get_kiosk', kiosk_id=self.kiosk_two.id, _external=True)
+                href=url_for('v1.get_kiosk', kiosk_id=self.kiosk_two.id, _external=True),
             ),
         )

@@ -6,6 +6,8 @@ import random
 
 from datetime import datetime
 
+from sqlalchemy import or_
+
 # Add the top level of the repo so this script can import application modules
 sys.path.insert(0, os.path.dirname('..'))
 
@@ -27,13 +29,18 @@ def format_datetime(date, time):
 def add_trip(row):
     checkout_kiosk = Kiosk.query.filter_by(kiosk_name=row['checkout_kiosk']).first()
     return_kiosk = Kiosk.query.filter_by(kiosk_name=row['return_kiosk']).first()
+    route = Route.query.filter(or_(
+        Route.kiosk_one_id == checkout_kiosk.id,
+        Route.kiosk_two_id == return_kiosk.id
+    )).first()
 
     trip = Trip(bike_id=row['bike'],
                 checkout_kiosk=checkout_kiosk,
                 checkout_datetime=format_datetime(row['checkout_date'], row['checkout_time']),
                 return_kiosk=return_kiosk,
                 return_datetime=format_datetime(row['return_date'], row['return_time']),
-                duration=row['duration_minutes'])
+                duration=row['duration_minutes'],
+                route_id=route.id)
     db.session.add(trip)
     return trip
 
@@ -67,18 +74,6 @@ with open('data/geocode_stations.csv', 'r') as csvfile:
         db.session.add(kiosk)
     db.session.commit()
 
-with open('data/cleaned_data.csv', 'r') as csvfile:
-    reader = csv.DictReader(csvfile, delimiter=',')
-
-    rider_collection = RiderCollection()
-    for row in random.sample([row for row in reader], 1000):
-        trip = add_trip(row)
-        rider = rider_collection.get_rider(row['user_id'])
-
-        rider.trips.append(trip)
-
-    db.session.commit()
-
 with open('data/routes.json') as data_file:
     routes = json.load(data_file)
 
@@ -94,3 +89,15 @@ with open('data/routes.json') as data_file:
 
         db.session.add(route_record)
         db.session.commit()
+
+with open('data/cleaned_data.csv', 'r') as csvfile:
+    reader = csv.DictReader(csvfile, delimiter=',')
+
+    rider_collection = RiderCollection()
+    for row in random.sample([row for row in reader], 1000):
+        trip = add_trip(row)
+        rider = rider_collection.get_rider(row['user_id'])
+
+        rider.trips.append(trip)
+
+    db.session.commit()
