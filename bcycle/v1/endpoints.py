@@ -33,6 +33,19 @@ def get_rider(rider_id):
     return jsonify(rider.to_dict())
 
 
+@v1_blueprint.route('/route')
+@paginate('routes')
+def get_routes():
+    return Route.query
+
+
+@v1_blueprint.route('/route/<int:route_id>')
+@no_resource_error_handler
+def get_route(route_id):
+    route = Route.query.get(route_id)
+    return jsonify(route.to_dict())
+
+
 @v1_blueprint.route('/kiosk')
 @paginate('kiosks')
 def get_kiosks():
@@ -70,21 +83,8 @@ def kiosk_neighbors(kiosk_id):
     ))
 
 
-@v1_blueprint.route('/route')
-@paginate('routes')
-def get_routes():
-    return Route.query
-
-
-@v1_blueprint.route('/route/<int:route_id>')
-@no_resource_error_handler
-def get_route(route_id):
-    route = Route.query.get(route_id)
-    return jsonify(route.to_dict())
-
-
-@v1_blueprint.route('/route/top')
-def get_top_routes():
+@v1_blueprint.route('/kiosk/<int:kiosk_id>/destinations')
+def get_top_routes(kiosk_id):
     kiosk_one = aliased(Kiosk)
     kiosk_two = aliased(Kiosk)
 
@@ -98,6 +98,7 @@ def get_top_routes():
                        kiosk_one.id.label('kiosk_one_id'),
                        kiosk_two.id.label('kiosk_two_id'),
                        Route.id)\
+        .filter(or_(kiosk_one.id == kiosk_id, kiosk_two.id == kiosk_id))\
         .group_by('kiosk_one_name', 'kiosk_two_name', 'kiosk_1.id', 'kiosk_2.id', 'route.id')\
         .order_by(desc('count'))\
         .limit(5)
