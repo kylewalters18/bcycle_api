@@ -106,14 +106,12 @@ def get_top_routes(kiosk_id):
     return jsonify(
         [dict(
             count=route.count,
-            id=url_for('v1.get_route', route_id=route.id, _external=True),
-            kiosk_one=dict(
-                name=route.kiosk_one_name,
-                href=url_for('v1.get_kiosk', kiosk_id=route.kiosk_one_id, _external=True)
-            ),
-            kiosk_two=dict(
-                name=route.kiosk_two_name,
-                href=url_for('v1.get_kiosk', kiosk_id=route.kiosk_two_id, _external=True)
-            ),
+            route=url_for('v1.get_route',
+                       route_id=route.id,
+                       _external=True),
+            name=route.kiosk_two_name if route.kiosk_one_id == kiosk_id else route.kiosk_one_name,
+            destination=url_for('v1.get_kiosk',
+                         kiosk_id=route.kiosk_two_id if route.kiosk_one_id == kiosk_id else route.kiosk_one_id,
+                         _external=True)
         ) for route in routes]
     )
