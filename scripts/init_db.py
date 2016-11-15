@@ -6,7 +6,7 @@ import random
 
 from datetime import datetime
 
-from sqlalchemy import or_
+from sqlalchemy import and_, or_
 
 # Add the top level of the repo so this script can import application modules
 sys.path.insert(0, os.path.dirname('..'))
@@ -14,8 +14,8 @@ sys.path.insert(0, os.path.dirname('..'))
 from bcycle import db
 from bcycle.v1.models import Kiosk, Rider, Trip, Route
 
-Route.query.delete()
 Trip.query.delete()
+Route.query.delete()
 Rider.query.delete()
 Kiosk.query.delete()
 
@@ -30,8 +30,14 @@ def add_trip(row):
     checkout_kiosk = Kiosk.query.filter_by(kiosk_name=row['checkout_kiosk']).first()
     return_kiosk = Kiosk.query.filter_by(kiosk_name=row['return_kiosk']).first()
     route = Route.query.filter(or_(
-        Route.kiosk_one_id == checkout_kiosk.id,
-        Route.kiosk_two_id == return_kiosk.id
+        and_(
+            Route.kiosk_one_id == checkout_kiosk.id,
+            Route.kiosk_two_id == return_kiosk.id
+        ),
+        and_(
+            Route.kiosk_one_id == return_kiosk.id,
+            Route.kiosk_two_id == checkout_kiosk.id
+        )
     )).first()
 
     trip = Trip(bike_id=row['bike'],
@@ -40,7 +46,7 @@ def add_trip(row):
                 return_kiosk=return_kiosk,
                 return_datetime=format_datetime(row['return_date'], row['return_time']),
                 duration=row['duration_minutes'],
-                route_id=route.id)
+                route_id=route.id if route else None)
     db.session.add(trip)
     return trip
 
