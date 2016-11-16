@@ -1,5 +1,7 @@
+import datetime
+
 from flask import jsonify, url_for
-from sqlalchemy import or_, func, desc
+from sqlalchemy import or_, func, desc, extract
 from sqlalchemy.orm import aliased
 
 from bcycle.v1 import v1_blueprint
@@ -107,11 +109,28 @@ def get_top_routes(kiosk_id):
         [dict(
             count=route.count,
             route=url_for('v1.get_route',
-                       route_id=route.id,
-                       _external=True),
+                          route_id=route.id,
+                          _external=True),
             name=route.kiosk_two_name if route.kiosk_one_id == kiosk_id else route.kiosk_one_name,
             destination=url_for('v1.get_kiosk',
-                         kiosk_id=route.kiosk_two_id if route.kiosk_one_id == kiosk_id else route.kiosk_one_id,
-                         _external=True)
+                                kiosk_id=route.kiosk_two_id if route.kiosk_one_id == kiosk_id else route.kiosk_one_id,
+                                _external=True)
         ) for route in routes]
     )
+
+
+@v1_blueprint.route('/kiosk/<int:kiosk_id>/histogram')
+def histogram(kiosk_id):
+    trips = Trip.query\
+        .with_entities(func.count(Trip.id).label('count'),
+                       extract('hour', Trip.checkout_datetime).label('hour'))\
+        .filter(or_(Trip.checkout_kiosk_id == kiosk_id,
+                    Trip.return_kiosk_id == kiosk_id))\
+        .group_by('hour')\
+        .order_by('hour')\
+        .all()
+
+    return jsonify([dict(trips=trip[0],
+                         date=datetime.datetime(2015, 1, 1, int(trip[1])).isoformat())
+                    for trip in trips])
+
